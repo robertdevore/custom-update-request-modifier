@@ -307,154 +307,31 @@ function custom_urm_sanitize_urls( $urls ) {
 }
 
 /**
- * Modify the user-agent, exclude items with UpdateURI, and log the request details.
+ * Normalize URL by retaining only essential parameters for specific API requests.
  *
- * @param array  $args HTTP request arguments.
- * @param string $url  The request URL.
- * 
- * @since  1.0.0
- * @return array Modified HTTP request arguments.
+ * @param string $url      The original URL to normalize.
+ * @param string $data_type Type of data being requested (core, plugins, themes).
+ * @return string The normalized URL containing only essential parameters.
  */
-function custom_modify_user_agent( $args, $url ) {
-    $api_urls = get_option( 'custom_urm_api_urls', [] );
+function custom_urm_normalize_url( $url, $data_type = 'core' ) {
+    // Parse the URL to get components and query parameters.
+    $parsed_url = wp_parse_url( $url );
+    parse_str( $parsed_url['query'] ?? '', $query_params );
 
-    foreach ( $api_urls as $endpoint ) {
-        $normalized_endpoint = untrailingslashit( $endpoint );
+    // Set allowed parameters based on the data type.
+    $allowed_params = match ($data_type) {
+        'core'    => [ 'version', 'php', 'locale', 'mysql', 'local_package', 'multisite_enabled', 'initial_db_version' ],
+        'plugins' => [ 'plugins', 'active' ],
+        'themes'  => [ 'themes' ],
+        default   => []
+    };
 
-        if ( strpos( $url, $normalized_endpoint ) === 0 ) {
-            // Modify the user-agent header for the specified URL.
-            if ( ! empty( $args['user-agent'] ) ) {
-                $original_user_agent = $args['user-agent'];
-                $modified_user_agent = str_replace(
-                    get_home_url(),
-                    apply_filters( 'custom_urm_user_agent_string_replace', 'wordpress.org' ),
-                    $args['user-agent']
-                );
-                $args['user-agent'] = $modified_user_agent;
-                error_log( 'Custom URM: Modified user-agent from "' . $original_user_agent . '" to "' . $modified_user_agent . '".' );
-            }
+    // Filter query parameters to retain only those allowed.
+    $filtered_params = array_intersect_key( $query_params, array_flip( $allowed_params ) );
+    $filtered_query = http_build_query( $filtered_params );
 
-            // Process only if this is the plugin or theme update-check request.
-            if ( strpos( $url, 'wordpress.org/plugins/update-check/' ) !== false || strpos( $url, 'api.wordpress.org/themes/update-check/' ) !== false ) {
-                $data_field = strpos( $url, 'plugins/update-check/' ) !== false ? 'plugins' : 'themes';
-
-                if ( isset( $args['body'][ $data_field ] ) ) {
-                    $decodedJson = json_decode( $args['body'][ $data_field ], true );
-
-                    if ( $decodedJson && isset( $decodedJson[ $data_field ] ) ) {
-                        error_log( "Custom URM: Decoded {$data_field} JSON successfully." );
-
-                        $toRemove = [];
-                        foreach ( $decodedJson[ $data_field ] as $file => $item ) {
-                            // Exclude items with an UpdateURI field.
-                            if ( isset( $item['UpdateURI'] ) && ! empty( $item['UpdateURI'] ) ) {
-                                error_log( "Custom URM: Excluding {$data_field} item \"{$file}\" due to UpdateURI in header." );
-                                $toRemove[] = $file;
-                            }
-                        }
-
-                        // Remove items that need to be excluded from the update check.
-                        foreach ( $toRemove as $remove ) {
-                            unset( $decodedJson[ $data_field ][ $remove ] );
-                            error_log( "Custom URM: Removed {$data_field} item \"{$remove}\" from update check." );
-                        }
-
-                        // For plugins only, ensure removed plugins aren't listed as active.
-                        if ( $data_field === 'plugins' && isset( $decodedJson['active'] ) && is_array( $decodedJson['active'] ) ) {
-                            $original_active = $decodedJson['active'];
-                            $decodedJson['active'] = array_diff( $decodedJson['active'], $toRemove );
-                            $removed_active = array_diff( $original_active, $decodedJson['active'] );
-                            foreach ( $removed_active as $removed_slug ) {
-                                error_log( "Custom URM: Removed active plugin \"{$removed_slug}\"." );
-                            }
-                        }
-
-                        // Set the filtered JSON data back into the request body.
-                        $args['body'][ $data_field ] = json_encode( $decodedJson );
-                        error_log( "Custom URM: Re-encoded {$data_field} JSON after modifications." );
-                    } else {
-                        error_log( "Custom URM: Failed to decode {$data_field} JSON." );
-                    }
-                } else {
-                    error_log( "Custom URM: \"{$data_field}\" field not set in request body." );
-                }
-            }
-
-            // Log the request for monitoring.
-            $request_headers = isset( $args['headers'] ) && is_array( $args['headers'] ) ? json_encode( $args['headers'], JSON_PRETTY_PRINT ) : '{}';
-            $request_body    = isset( $args['body'] ) ? json_encode( $args['body'], JSON_PRETTY_PRINT ) : '{}';
-
-            custom_urm_log_request( $url, $args['user-agent'], $request_headers, $request_body );
-
-            break;
-        }
-    }
-
-    return $args;
-}
-
-
-/**
- * Capture the response and update the corresponding log entry.
- *
- * @param WP_Error|array $response The HTTP response data or WP_Error.
- * @param string         $context  The context of the request.
- * @param string         $class    The HTTP class.
- * @param array          $args     HTTP request arguments.
- * @param string         $url      The request URL.
- * 
- * @since  1.0.0
- * @return void
- */
-function custom_urm_log_response( $response, $context, $class, $args, $url ) {
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'custom_urm_logs';
-
-    // Only proceed if the URL is one of the monitored API URLs.
-    $api_urls = get_option( 'custom_urm_api_urls', [] );
-    $is_monitored = false;
-    foreach ( $api_urls as $endpoint ) {
-        $normalized_endpoint = untrailingslashit( $endpoint );
-        if ( strpos( $url, $normalized_endpoint ) === 0 ) {
-            $is_monitored = true;
-            break;
-        }
-    }
-
-    if ( ! $is_monitored ) {
-        return;
-    }
-
-    // Determine the response code.
-    if ( is_wp_error( $response ) ) {
-        $response_code = $response->get_error_code();
-    } elseif ( isset( $response['response']['code'] ) ) {
-        $response_code = intval( $response['response']['code'] );
-    } else {
-        $response_code = 'Unknown';
-    }
-
-    // Find the latest log entry for this URL with 'Pending' status.
-    $log_entry = $wpdb->get_row(
-        $wpdb->prepare(
-            "SELECT * FROM $table_name WHERE url = %s AND response_code = %s ORDER BY time DESC LIMIT 1",
-            $url,
-            'Pending'
-        )
-    );
-
-    if ( $log_entry ) {
-        // Update the response code.
-        $wpdb->update(
-            $table_name,
-            [
-                'response_code' => $response_code
-            ],
-            [ 'id' => $log_entry->id ],
-            [ '%s' ],
-            [ '%d' ]
-        );
-    }
+    // Rebuild URL with filtered query.
+    return $parsed_url['scheme'] . '://' . $parsed_url['host'] . $parsed_url['path'] . '?' . $filtered_query;
 }
 
 /**
@@ -484,6 +361,144 @@ function custom_urm_log_request( $url, $user_agent, $request_headers, $request_b
         ],
         [ '%s', '%s', '%s', '%s', '%s', '%s' ]
     );
+
+    error_log( "Custom URM: Inserted log entry with URL: $url and 'Pending' status." );
+}
+
+/**
+ * Modify user-agent, exclude items with UpdateURI, filter core params, and log request details.
+ *
+ * @param array  $args HTTP request arguments.
+ * @param string $url  The request URL.
+ * 
+ * @since 1.0.0
+ * @return array Modified HTTP request arguments.
+ */
+function custom_modify_user_agent( $args, $url ) {
+    $api_urls = get_option( 'custom_urm_api_urls', [] );
+
+    foreach ( $api_urls as $endpoint ) {
+        $normalized_endpoint = untrailingslashit( $endpoint );
+
+        if ( strpos( $url, $normalized_endpoint ) === 0 ) {
+            // Identify data type (core, plugins, or themes) for normalization.
+            $data_type = match (true) {
+                strpos( $url, 'core/version-check/' ) !== false    => 'core',
+                strpos( $url, 'plugins/update-check/' ) !== false  => 'plugins',
+                strpos( $url, 'themes/update-check/' ) !== false   => 'themes',
+                default                                            => 'core'
+            };
+
+            // Normalize URL for logging.
+            $url = custom_urm_normalize_url( $url, $data_type );
+            $args['url'] = $url; // Update the URL in the arguments.
+            error_log( "Custom URM: Normalized $data_type URL to '$url'." );
+
+            // Modify the user-agent header.
+            if ( ! empty( $args['user-agent'] ) ) {
+                $original_user_agent = $args['user-agent'];
+                $modified_user_agent = str_replace(
+                    get_home_url(),
+                    apply_filters( 'custom_urm_user_agent_string_replace', 'wordpress.org' ),
+                    $args['user-agent']
+                );
+                $args['user-agent'] = $modified_user_agent;
+                error_log( "Custom URM: Modified user-agent from '$original_user_agent' to '$modified_user_agent'." );
+            }
+
+            // Handle plugins/themes by excluding those with UpdateURI and normalizing request body data.
+            if ( $data_type !== 'core' && isset( $args['body'][ $data_type ] ) ) {
+                $decodedJson = json_decode( $args['body'][ $data_type ], true );
+
+                if ( $decodedJson && isset( $decodedJson[ $data_type ] ) ) {
+                    error_log( "Custom URM: Decoded $data_type JSON successfully." );
+
+                    $toRemove = [];
+                    foreach ( $decodedJson[ $data_type ] as $file => $item ) {
+                        if ( isset( $item['UpdateURI'] ) && ! empty( $item['UpdateURI'] ) ) {
+                            error_log( "Custom URM: Excluding $data_type item '$file' due to UpdateURI in header." );
+                            $toRemove[] = $file;
+                        }
+                    }
+
+                    // Remove items that need to be excluded from the update check.
+                    foreach ( $toRemove as $remove ) {
+                        unset( $decodedJson[ $data_type ][ $remove ] );
+                        error_log( "Custom URM: Removed $data_type item '$remove' from update check." );
+                    }
+
+                    if ( $data_type === 'plugins' && isset( $decodedJson['active'] ) && is_array( $decodedJson['active'] ) ) {
+                        $original_active = $decodedJson['active'];
+                        $decodedJson['active'] = array_diff( $decodedJson['active'], $toRemove );
+                    }
+
+                    // Encode filtered JSON back into request body.
+                    $args['body'][ $data_type ] = json_encode( $decodedJson );
+                    error_log( "Custom URM: Re-encoded $data_type JSON after modifications." );
+                } else {
+                    error_log( "Custom URM: Failed to decode $data_type JSON." );
+                }
+            }
+
+            // Log request.
+            $request_headers = isset( $args['headers'] ) && is_array( $args['headers'] ) ? json_encode( $args['headers'], JSON_PRETTY_PRINT ) : '{}';
+            $request_body    = isset( $args['body'] ) ? json_encode( $args['body'], JSON_PRETTY_PRINT ) : '{}';
+            custom_urm_log_request( $url, $args['user-agent'], $request_headers, $request_body );
+
+            break;
+        }
+    }
+    return $args;
+}
+
+/**
+ * Capture the response and update the corresponding log entry.
+ *
+ * @param WP_Error|array $response The HTTP response data or WP_Error.
+ * @param string         $context  The context of the request.
+ * @param string         $class    The HTTP class.
+ * @param array          $args     HTTP request arguments.
+ * @param string         $url      The request URL.
+ * 
+ * @since 1.0.0
+ * @return void
+ */
+function custom_urm_log_response( $response, $context, $class, $args, $url ) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'custom_urm_logs';
+
+    // Determine the data type and normalize the URL accordingly.
+    $data_type = match (true) {
+        strpos( $url, 'core/version-check/' ) !== false    => 'core',
+        strpos( $url, 'plugins/update-check/' ) !== false  => 'plugins',
+        strpos( $url, 'themes/update-check/' ) !== false   => 'themes',
+        default                                            => 'core'
+    };
+    $normalized_url = custom_urm_normalize_url( $url, $data_type );
+
+    // Determine the response code.
+    $response_code = is_wp_error( $response ) ? $response->get_error_code() : ( $response['response']['code'] ?? 'Unknown' );
+    error_log( "Custom URM: Capturing response with code $response_code for $data_type URL: $normalized_url" );
+
+    // Find the latest log entry with a matching normalized URL.
+    $log_entry = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM $table_name WHERE url = %s AND response_code = 'Pending' ORDER BY time DESC LIMIT 1",
+            $normalized_url
+        )
+    );
+
+    if ( $log_entry ) {
+        $wpdb->update(
+            $table_name,
+            [ 'response_code' => $response_code ],
+            [ 'id' => $log_entry->id ],
+            [ '%s' ],
+            [ '%d' ]
+        );
+    } else {
+        error_log( "Custom URM: No matching 'Pending' entry found for $data_type normalized URL: $normalized_url" );
+    }
 }
 
 /**
