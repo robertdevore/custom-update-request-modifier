@@ -1,0 +1,48 @@
+.custom-urm-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.custom-urm-modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-height: 70%;
+    overflow-y: auto;
+}
+
+.custom-urm-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.custom-urm-close:hover,
+.custom-urm-close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#api-urls-table input[type="text"] {
+    width: 100% !important;
+}
+
+#api-urls-table td {
+    padding: 15px 20px 15px 0
+}
