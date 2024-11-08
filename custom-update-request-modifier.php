@@ -320,7 +320,7 @@ function custom_urm_normalize_url( $url, $data_type = 'core' ) {
 
     // Set allowed parameters based on the data type.
     $allowed_params = match ($data_type) {
-        'core'    => [ 'version', 'php', 'locale', 'mysql', 'local_package', 'multisite_enabled', 'initial_db_version' ],
+        'core'    => apply_filters( 'custom_urm_allowed_core_params', [ 'version', 'php', 'locale', 'mysql', 'local_package', 'multisite_enabled', 'initial_db_version' ] ),
         'plugins' => [ 'plugins', 'active' ],
         'themes'  => [ 'themes' ],
         default   => []

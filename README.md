@@ -39,12 +39,37 @@ Access the plugin settings under **Settings > Custom URM** in the WordPress admi
 - The logs tab allows clearing of log data, which can be done manually or will automatically clear daily.
 
 ## Filters
-The plugin includes a filter to customize the `user-agent` string replacement:
+
+The plugin includes filters to customize various aspects of its functionality.
+
+### User-Agent String Replacement
+
 - **`custom_urm_user_agent_string_replace`**: Modifies the replacement value in the user-agent string.
 
 Example usage:
+
 ```php
 add_filter( 'custom_urm_user_agent_string_replace', function() {
     return 'notmatt.press';
 } );
 ```
+
+### Core Parameters for Update Checks
+
+- **`custom_urm_allowed_core_params`**: Customizes the list of allowed parameters in the WordPress core update request.
+
+Example usage:
+
+```php
+add_filter( 'custom_urm_allowed_core_params', function( $params ) {
+    // Add a new parameter.
+    $params[] = 'new_param';
+
+    // Remove an existing parameter.
+    $params = array_diff( $params, [ 'mysql' ] );
+
+    return $params;
+} );
+```
+
+Use `custom_urm_allowed_core_params` to control which parameters are included in the core update check request, allowing for fine-grained customization.
