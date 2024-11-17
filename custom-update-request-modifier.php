@@ -361,8 +361,6 @@ function custom_urm_log_request( $url, $user_agent, $request_headers, $request_b
         ],
         [ '%s', '%s', '%s', '%s', '%s', '%s' ]
     );
-
-    error_log( "Custom URM: Inserted log entry with URL: $url and 'Pending' status." );
 }
 
 /**
@@ -390,9 +388,8 @@ function custom_modify_user_agent( $args, $url ) {
             };
 
             // Normalize URL for logging.
-            $url = custom_urm_normalize_url( $url, $data_type );
-            $args['url'] = $url; // Update the URL in the arguments.
-            error_log( "Custom URM: Normalized $data_type URL to '$url'." );
+            $url         = custom_urm_normalize_url( $url, $data_type );
+            $args['url'] = $url;
 
             // Modify the user-agent header.
             if ( ! empty( $args['user-agent'] ) ) {
@@ -403,7 +400,6 @@ function custom_modify_user_agent( $args, $url ) {
                     $args['user-agent']
                 );
                 $args['user-agent'] = $modified_user_agent;
-                error_log( "Custom URM: Modified user-agent from '$original_user_agent' to '$modified_user_agent'." );
             }
 
             // Handle plugins/themes by excluding those with UpdateURI and normalizing request body data.
@@ -411,12 +407,10 @@ function custom_modify_user_agent( $args, $url ) {
                 $decodedJson = json_decode( $args['body'][ $data_type ], true );
 
                 if ( $decodedJson && isset( $decodedJson[ $data_type ] ) ) {
-                    error_log( "Custom URM: Decoded $data_type JSON successfully." );
 
                     $toRemove = [];
                     foreach ( $decodedJson[ $data_type ] as $file => $item ) {
                         if ( isset( $item['UpdateURI'] ) && ! empty( $item['UpdateURI'] ) ) {
-                            error_log( "Custom URM: Excluding $data_type item '$file' due to UpdateURI in header." );
                             $toRemove[] = $file;
                         }
                     }
@@ -424,7 +418,6 @@ function custom_modify_user_agent( $args, $url ) {
                     // Remove items that need to be excluded from the update check.
                     foreach ( $toRemove as $remove ) {
                         unset( $decodedJson[ $data_type ][ $remove ] );
-                        error_log( "Custom URM: Removed $data_type item '$remove' from update check." );
                     }
 
                     if ( $data_type === 'plugins' && isset( $decodedJson['active'] ) && is_array( $decodedJson['active'] ) ) {
@@ -434,9 +427,8 @@ function custom_modify_user_agent( $args, $url ) {
 
                     // Encode filtered JSON back into request body.
                     $args['body'][ $data_type ] = json_encode( $decodedJson );
-                    error_log( "Custom URM: Re-encoded $data_type JSON after modifications." );
                 } else {
-                    error_log( "Custom URM: Failed to decode $data_type JSON." );
+                    error_log( "[Custom Update Request Modifier] Custom URM: Failed to decode $data_type JSON." );
                 }
             }
 
@@ -478,7 +470,6 @@ function custom_urm_log_response( $response, $context, $class, $args, $url ) {
 
     // Determine the response code.
     $response_code = is_wp_error( $response ) ? $response->get_error_code() : ( $response['response']['code'] ?? 'Unknown' );
-    error_log( "Custom URM: Capturing response with code $response_code for $data_type URL: $normalized_url" );
 
     // Find the latest log entry with a matching normalized URL.
     $log_entry = $wpdb->get_row(
@@ -497,7 +488,7 @@ function custom_urm_log_response( $response, $context, $class, $args, $url ) {
             [ '%d' ]
         );
     } else {
-        error_log( "Custom URM: No matching 'Pending' entry found for $data_type normalized URL: $normalized_url" );
+        error_log( "[Custom Update Request Modifier] No matching 'Pending' entry found for $data_type normalized URL: $normalized_url" );
     }
 }
 
