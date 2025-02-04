@@ -1,0 +1,154 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Custom Update Request Modifier\n"
+"POT-Creation-Date: 2025-02-04 14:16-0500\n"
+"PO-Revision-Date: 2025-02-04 14:16-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: custom-update-request-modifier.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: vendor\n"
+
+#: classes/class-custom-urm-logs-table.php:28
+msgid "Log"
+msgstr "Registro"
+
+#: classes/class-custom-urm-logs-table.php:29
+#: custom-update-request-modifier.php:251
+msgid "Logs"
+msgstr "Registri"
+
+#: classes/class-custom-urm-logs-table.php:100
+msgid "Time"
+msgstr "Orario"
+
+#: classes/class-custom-urm-logs-table.php:101
+msgid "URL"
+msgstr "URL"
+
+#: classes/class-custom-urm-logs-table.php:102
+msgid "User Agent"
+msgstr "User Agent"
+
+#: classes/class-custom-urm-logs-table.php:103
+#: classes/class-custom-urm-logs-table.php:233
+msgid "Request Headers"
+msgstr "Richiedi intestazioni"
+
+#: classes/class-custom-urm-logs-table.php:104
+#: classes/class-custom-urm-logs-table.php:243
+msgid "Request Body"
+msgstr "Corpo della richiesta"
+
+#: classes/class-custom-urm-logs-table.php:105
+msgid "Response Code"
+msgstr "Codice di risposta"
+
+#: classes/class-custom-urm-logs-table.php:172
+#: classes/class-custom-urm-logs-table.php:175
+msgid "Show"
+msgstr "Mostra"
+
+#: classes/class-custom-urm-logs-table.php:201
+msgid "No logs found."
+msgstr "Nessun registro trovato."
+
+#: custom-update-request-modifier.php:181
+msgid "Custom URM Settings"
+msgstr "Impostazioni URM personalizzate"
+
+#: custom-update-request-modifier.php:182
+msgid "Custom URM"
+msgstr "URM personalizzato"
+
+#: custom-update-request-modifier.php:210
+msgid "Nonce verification failed."
+msgstr "La verifica nonce non è riuscita."
+
+#: custom-update-request-modifier.php:226
+msgid "All logs have been cleared successfully."
+msgstr "Tutti i registri sono stati cancellati con successo."
+
+#: custom-update-request-modifier.php:232
+msgid "Custom Update Request Modifier Settings"
+msgstr ""
+"Impostazioni del modificatore di richiesta di aggiornamento personalizzato"
+
+#: custom-update-request-modifier.php:238
+msgid "Are you sure you want to clear all logs?"
+msgstr "È sicuro di voler cancellare tutti i registri?"
+
+#: custom-update-request-modifier.php:239
+msgid "Clear Logs"
+msgstr "Pulisci logs"
+
+#: custom-update-request-modifier.php:248
+#: custom-update-request-modifier.php:263
+msgid "API URLs"
+msgstr "URL API"
+
+#: custom-update-request-modifier.php:264
+msgid ""
+"Add or remove API URLs whose HTTP requests will be modified and logged for "
+"monitoring purposes."
+msgstr ""
+"Aggiungere o rimuovere URL API le cui richieste HTTP saranno modificate e "
+"registrate a scopo di monitoraggio."
+
+#: custom-update-request-modifier.php:271
+#: custom-update-request-modifier.php:301
+msgid "Remove"
+msgstr "Rimuovi"
+
+#: custom-update-request-modifier.php:277
+msgid "Add URL"
+msgstr "Aggiungi URL"
+
+#: custom-update-request-modifier.php:278
+msgid "Save Changes"
+msgstr "Salva modifiche"
+
+#: custom-update-request-modifier.php:289
+msgid "Search"
+msgstr "Cerca"
+
+#. Plugin Name of the plugin/theme
+msgid "Custom Update Request Modifier"
+msgstr "Modificatore di richiesta di aggiornamento personalizzato"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/robertdevore/custom-update-request-modifier/"
+msgstr "https://github.com/robertdevore/custom-update-request-modifier/"
+
+#. Description of the plugin/theme
+msgid ""
+"Modifies the user-agent string in HTTP requests for theme, plugin, core, and "
+"other WordPress API requests. Allows custom API URL configuration, logs "
+"request details including headers and body, and excludes non-WordPress.org "
+"plugins from update checks."
+msgstr ""
+"Modifica la stringa dell'agente utente nelle richieste HTTP per temi, "
+"plugin, core e altre richieste API di WordPress. Consente la configurazione "
+"personalizzata dell'URL dell'API, registra i dettagli della richiesta, "
+"compresi intestazioni e corpo, ed esclude i plugin non WordPress.org dai "
+"controlli di aggiornamento."
+
+#. Author of the plugin/theme
+msgid "Robert DeVore"
+msgstr "Robert DeVore"
+
+#. Author URI of the plugin/theme
+msgid "https://robertdevore.com/"
+msgstr "https://robertdevore.com/"
