@@ -311,6 +311,7 @@ function custom_urm_sanitize_urls( $urls ) {
  *
  * @param string $url      The original URL to normalize.
  * @param string $data_type Type of data being requested (core, plugins, themes).
+ * 
  * @return string The normalized URL containing only essential parameters.
  */
 function custom_urm_normalize_url( $url, $data_type = 'core' ) {
@@ -319,7 +320,7 @@ function custom_urm_normalize_url( $url, $data_type = 'core' ) {
     parse_str( $parsed_url['query'] ?? '', $query_params );
 
     // Set allowed parameters based on the data type.
-    $allowed_params = match ($data_type) {
+    $allowed_params = match ( $data_type ) {
         'core'    => apply_filters( 'custom_urm_allowed_core_params', [ 'version', 'php', 'locale', 'mysql', 'local_package', 'multisite_enabled', 'initial_db_version' ] ),
         'plugins' => [ 'plugins', 'active' ],
         'themes'  => [ 'themes' ],
@@ -369,7 +370,7 @@ function custom_urm_log_request( $url, $user_agent, $request_headers, $request_b
  * @param array  $args HTTP request arguments.
  * @param string $url  The request URL.
  * 
- * @since 1.0.0
+ * @since  1.0.0
  * @return array Modified HTTP request arguments.
  */
 function custom_modify_user_agent( $args, $url ) {
@@ -452,7 +453,7 @@ function custom_modify_user_agent( $args, $url ) {
  * @param array          $args     HTTP request arguments.
  * @param string         $url      The request URL.
  * 
- * @since 1.0.0
+ * @since  1.0.0
  * @return void
  */
 function custom_urm_log_response( $response, $context, $class, $args, $url ) {
