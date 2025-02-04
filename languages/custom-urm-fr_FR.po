@@ -1,0 +1,153 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Custom Update Request Modifier\n"
+"POT-Creation-Date: 2025-02-04 14:14-0500\n"
+"PO-Revision-Date: 2025-02-04 14:15-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: custom-update-request-modifier.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: vendor\n"
+
+#: classes/class-custom-urm-logs-table.php:28
+msgid "Log"
+msgstr "Journal"
+
+#: classes/class-custom-urm-logs-table.php:29
+#: custom-update-request-modifier.php:251
+msgid "Logs"
+msgstr "Journaux"
+
+#: classes/class-custom-urm-logs-table.php:100
+msgid "Time"
+msgstr "Heure"
+
+#: classes/class-custom-urm-logs-table.php:101
+msgid "URL"
+msgstr "URL"
+
+#: classes/class-custom-urm-logs-table.php:102
+msgid "User Agent"
+msgstr "Agent utilisateur"
+
+#: classes/class-custom-urm-logs-table.php:103
+#: classes/class-custom-urm-logs-table.php:233
+msgid "Request Headers"
+msgstr "En-têtes de requête"
+
+#: classes/class-custom-urm-logs-table.php:104
+#: classes/class-custom-urm-logs-table.php:243
+msgid "Request Body"
+msgstr "Corps de la demande"
+
+#: classes/class-custom-urm-logs-table.php:105
+msgid "Response Code"
+msgstr "Code de réponse"
+
+#: classes/class-custom-urm-logs-table.php:172
+#: classes/class-custom-urm-logs-table.php:175
+msgid "Show"
+msgstr "Afficher"
+
+#: classes/class-custom-urm-logs-table.php:201
+msgid "No logs found."
+msgstr "Aucun journal trouvé."
+
+#: custom-update-request-modifier.php:181
+msgid "Custom URM Settings"
+msgstr "Paramètres URM personnalisés"
+
+#: custom-update-request-modifier.php:182
+msgid "Custom URM"
+msgstr "URM personnalisé"
+
+#: custom-update-request-modifier.php:210
+msgid "Nonce verification failed."
+msgstr "Échec de la vérification."
+
+#: custom-update-request-modifier.php:226
+msgid "All logs have been cleared successfully."
+msgstr "Tous les journaux ont été effacés avec succès."
+
+#: custom-update-request-modifier.php:232
+msgid "Custom Update Request Modifier Settings"
+msgstr "Paramètres du modificateur de demande de mise à jour personnalisée"
+
+#: custom-update-request-modifier.php:238
+msgid "Are you sure you want to clear all logs?"
+msgstr "Êtes-vous sûr de vouloir effacer tous les journaux ?"
+
+#: custom-update-request-modifier.php:239
+msgid "Clear Logs"
+msgstr "Supprimer le journal d'erreurs"
+
+#: custom-update-request-modifier.php:248
+#: custom-update-request-modifier.php:263
+msgid "API URLs"
+msgstr "URLs API"
+
+#: custom-update-request-modifier.php:264
+msgid ""
+"Add or remove API URLs whose HTTP requests will be modified and logged for "
+"monitoring purposes."
+msgstr ""
+"Ajouter ou supprimer des URL d'API dont les requêtes HTTP seront modifiées "
+"et enregistrées à des fins de surveillance."
+
+#: custom-update-request-modifier.php:271
+#: custom-update-request-modifier.php:301
+msgid "Remove"
+msgstr "Supprimer"
+
+#: custom-update-request-modifier.php:277
+msgid "Add URL"
+msgstr "Ajouter URL"
+
+#: custom-update-request-modifier.php:278
+msgid "Save Changes"
+msgstr "Sauvegarder les changements"
+
+#: custom-update-request-modifier.php:289
+msgid "Search"
+msgstr "Rechercher"
+
+#. Plugin Name of the plugin/theme
+msgid "Custom Update Request Modifier"
+msgstr "Modificateur de demande de mise à jour personnalisée"
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/robertdevore/custom-update-request-modifier/"
+msgstr "https://github.com/robertdevore/custom-update-request-modifier/"
+
+#. Description of the plugin/theme
+msgid ""
+"Modifies the user-agent string in HTTP requests for theme, plugin, core, and "
+"other WordPress API requests. Allows custom API URL configuration, logs "
+"request details including headers and body, and excludes non-WordPress.org "
+"plugins from update checks."
+msgstr ""
+"Modifie la chaîne du user-agent dans les requêtes HTTP pour les thèmes, les "
+"plugins, le noyau et d'autres requêtes de l'API WordPress. Permet la "
+"configuration d'URL API personnalisées, enregistre les détails des requêtes, "
+"y compris les en-têtes et le corps, et exclut les plugins non-WordPress.org "
+"des vérifications de mise à jour."
+
+#. Author of the plugin/theme
+msgid "Robert DeVore"
+msgstr "Robert DeVore"
+
+#. Author URI of the plugin/theme
+msgid "https://robertdevore.com/"
+msgstr "https://robertdevore.com/"
