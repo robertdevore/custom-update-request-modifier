@@ -48,9 +48,7 @@ use RobertDevore\WPComCheck\WPComPluginHandler;
 
 new WPComPluginHandler( plugin_basename( __FILE__ ), 'https://robertdevore.com/why-this-plugin-doesnt-support-wordpress-com-hosting/' );
 
-/**
- * Current plugin version.
- */
+// Current plugin version.
 define( 'CUSTOM_URM_VERSION', '1.0.0' );
 
 /**
@@ -71,7 +69,8 @@ add_action( 'plugins_loaded', 'custom_urm_load_textdomain' );
 /**
  * Initialize the plugin.
  * 
- * @since 1.0.0
+ * @since  1.0.0
+ * @return void
  */
 function custom_urm_init() {
     add_filter( 'http_request_args', 'custom_modify_user_agent', 10, 2 );
@@ -189,7 +188,7 @@ function custom_urm_register_settings() {
     register_setting( 'custom_urm_settings_group', 'custom_urm_api_urls', [
         'type'              => 'array',
         'sanitize_callback' => 'custom_urm_sanitize_urls'
-    ]);
+    ] );
 }
 add_action( 'admin_menu', 'custom_urm_register_settings' );
 
@@ -206,23 +205,23 @@ function custom_urm_settings_page() {
 
     // Handle "Clear Logs" action.
     if ( isset( $_POST['custom_urm_clear_logs'] ) ) {
-        // Verify nonce
+        // Verify nonce.
         if ( ! isset( $_POST['custom_urm_clear_logs_nonce'] ) || ! wp_verify_nonce( $_POST['custom_urm_clear_logs_nonce'], 'custom_urm_clear_logs' ) ) {
             wp_die( __( 'Nonce verification failed.', 'custom-urm' ) );
         }
 
-        // Clear the logs
+        // Clear the logs.
         custom_urm_clear_logs();
 
-        // Redirect to avoid resubmission
+        // Redirect to avoid resubmission.
         wp_redirect( add_query_arg( 'cleared', '1', remove_query_arg( [ 'custom_urm_clear_logs', '_wpnonce' ], $_SERVER['REQUEST_URI'] ) ) );
         exit;
     }
 
-    // Determine the active tab
+    // Determine the active tab.
     $active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'api_urls';
 
-    // Display success message if logs were cleared
+    // Display success message if logs were cleared.
     if ( isset( $_GET['cleared'] ) && '1' === $_GET['cleared'] ) {
         echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'All logs have been cleared successfully.', 'custom-urm' ) . '</p></div>';
     }
