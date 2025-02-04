@@ -54,6 +54,21 @@ new WPComPluginHandler( plugin_basename( __FILE__ ), 'https://robertdevore.com/w
 define( 'CUSTOM_URM_VERSION', '1.0.0' );
 
 /**
+ * Load plugin text domain for translations
+ * 
+ * @since  1.0.1
+ * @return void
+ */
+function custom_urm_load_textdomain() {
+    load_plugin_textdomain( 
+        'custom-update-request-modifier',
+        false,
+        dirname( plugin_basename( __FILE__ ) ) . '/languages/'
+    );
+}
+add_action( 'plugins_loaded', 'custom_urm_load_textdomain' );
+
+/**
  * Initialize the plugin.
  * 
  * @since 1.0.0
