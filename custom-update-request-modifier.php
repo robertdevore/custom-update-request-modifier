@@ -12,7 +12,7 @@
    * Plugin Name: Custom Update Request Modifier
    * Description: Modifies the user-agent string in HTTP requests for theme, plugin, core, and other WordPress API requests. Allows custom API URL configuration, logs request details including headers and body, and excludes non-WordPress.org plugins from update checks.
    * Plugin URI:  https://github.com/robertdevore/custom-update-request-modifier/
-   * Version:     1.0.0
+   * Version:     1.0.1
    * Author:      Robert DeVore
    * Author URI:  https://robertdevore.com/
    * License:     GPL-2.0+
@@ -49,7 +49,7 @@ use RobertDevore\WPComCheck\WPComPluginHandler;
 new WPComPluginHandler( plugin_basename( __FILE__ ), 'https://robertdevore.com/why-this-plugin-doesnt-support-wordpress-com-hosting/' );
 
 // Current plugin version.
-define( 'CUSTOM_URM_VERSION', '1.0.0' );
+define( 'CUSTOM_URM_VERSION', '1.0.1' );
 
 /**
  * Load plugin text domain for translations
